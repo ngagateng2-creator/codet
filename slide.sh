@@ -80,7 +80,6 @@ lambe_PID=$!
 
 # 1. Atur tampilan terminal
 tput civis
-printf '\033[2J\033[48;5;0m'
 trap 'tput cnorm; printf "\033[0m\n"; exit' INT TERM
 
 cols=$(tput cols 2>/dev/null || echo 80)
@@ -88,20 +87,25 @@ text="NUJU PROSES"
 total_dots=12
 dots=0
 
-while kill -0 "$lambe_PID" 2>/dev/null; do
-    printf '\033[H'
-    printf '\033[2K'
+# Pindah ke baris baru khusus untuk animasi satu baris
+printf "\n"
 
-    # hitung posisi tengah
+while kill -0 "$lambe_PID" 2>/dev/null; do
+    # Kembali ke awal baris animasi dan bersihkan baris tersebut
+    printf '\033[1A\033[2K'
+
+    # Hitung posisi tengah
     total_len=$(( ${#text} + total_dots ))
     x=$(( (cols - total_len) / 2 ))
+    [[ $x -lt 0 ]] && x=0
 
     dot_str=""
     for ((i=0; i<dots; i++)); do
         dot_str="${dot_str}."
     done
 
-    printf '\033[%dG\033[1;37m%s%s\033[0m' "$x" "$text" "$dot_str"
+    printf '\033[%dG\033[1;37m%s%s\033[0m\n' "$x" "$text" "$dot_str"
+    
     dots=$(( (dots + 1) % (total_dots + 1) ))
     sleep 0.16
 done
