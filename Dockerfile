@@ -18,4 +18,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     awscli \
     && rm -rf /var/lib/apt/lists/*
-ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/main.sh"]
+ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/slide.sh"]
