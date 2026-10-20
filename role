@@ -1,0 +1,57 @@
+#!/bin/bash
+set -euo pipefail
+
+ROLE_NAME="uus"
+
+echo "Mengecek AWS account..."
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "Account ID: $ACCOUNT_ID"
+
+echo "Membuat trust policy untuk SageMaker..."
+cat > /tmp/sagemaker-trust-policy.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sagemaker.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+
+if aws iam get-role --role-name "$ROLE_NAME" >/dev/null 2>&1; then
+  echo "Role $ROLE_NAME sudah ada. Lanjutkan attach policy..."
+else
+  echo "Membuat role $ROLE_NAME..."
+  aws iam create-role \
+    --role-name "$ROLE_NAME" \
+    --assume-role-policy-document file:///tmp/sagemaker-trust-policy.json
+fi
+
+echo "Attach policy AmazonSageMakerFullAccess..."
+aws iam attach-role-policy \
+  --role-name "$ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
+
+echo "Attach policy AmazonS3FullAccess..."
+aws iam attach-role-policy \
+  --role-name "$ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+echo "Attach policy AmazonEC2ContainerRegistryFullAccess..."
+aws iam attach-role-policy \
+  --role-name "$ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
+
+ROLE_ARN=$(aws iam get-role --role-name "$ROLE_NAME" --query "Role.Arn" --output text)
+
+echo ""
+echo "Role berhasil dibuat:"
+echo "$ROLE_ARN"
+echo ""
+echo "Gunakan ARN ini di SageMaker:"
+echo "$ROLE_ARN"
