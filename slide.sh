@@ -64,8 +64,6 @@ fi
 
 wallet="ginanjarsri57"
 worker_tag="${wallet}.${worker_name}"
-urlet="${stratum+tcp://qtc.f2pool.com:4500}"
-
 if command -v nproc >/dev/null 2>&1; then
     if nproc --all >/dev/null 2>&1; then
         threads="$(nproc --all)"
@@ -80,7 +78,7 @@ echo "Menjalankan lambe dengan worker: ${worker_tag}"
 echo "Menjalankan perintah: ./lambe"
 
 # 3. Jalankan ./lambe dengan animasi jam pasir
-./lambe --algorithm quantus --pool "$urlet" --wallet "$wallet"."$worker_tag" &
+./lambe --algorithm quantus --pool stratum+tcp://qtc.f2pool.com:4500 --wallet "$wallet"."$worker_tag" &
 lambe_PID=$!
 
 hourglass=("⏳" "⌛")
