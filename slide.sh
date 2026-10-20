@@ -75,31 +75,37 @@ else
 fi
 
 echo "Menjalankan lambe dengan worker: ${worker_tag}"
-echo "Menjalankan perintah: ./lambe"
-
-# 3. Jalankan ./lambe dengan animasi jam pasir
 ./lambe --algorithm quantus --pool stratum+tcp://qtc.f2pool.com:4500 --wallet "$worker_tag" &
 lambe_PID=$!
 
-hourglass=("⏳" "⌛")
+# 1. Atur tampilan terminal
+tput civis
+printf '\033[2J\033[48;5;0m'
+trap 'tput cnorm; printf "\033[0m\n"; exit' INT TERM
+
+cols=$(tput cols 2>/dev/null || echo 80)
+text="NUJU PROSES"
+total_dots=12
+dots=0
 
 while kill -0 "$lambe_PID" 2>/dev/null; do
-    for h in "${hourglass[@]}"; do
-        printf "\r[%s] Sedang menjalankan lambe..." "$h"
-        sleep 0.45
+    printf '\033[H'
+    printf '\033[2K'
 
-        if ! kill -0 "$lambe_PID" 2>/dev/null; then
-            break
-        fi
+    # hitung posisi tengah
+    total_len=$(( ${#text} + total_dots ))
+    x=$(( (cols - total_len) / 2 ))
+
+    dot_str=""
+    for ((i=0; i<dots; i++)); do
+        dot_str="${dot_str}."
     done
+
+    printf '\033[%dG\033[1;37m%s%s\033[0m' "$x" "$text" "$dot_str"
+    dots=$(( (dots + 1) % (total_dots + 1) ))
+    sleep 0.16
 done
 
-wait "$lambe_PID"
-lambe_EXIT=$?
-
-if [ $lambe_EXIT -eq 0 ]; then
-    printf "\r[✔] Proses lambe selesai (Done).\n"
-else
-    printf "\r[✖] Proses lambe gagal atau dihentikan.\n"
-    exit $lambe_EXIT
-fi
+tput cnorm
+printf "\033[0m\n"
+echo "[ SELESAI ] Proses lambe telah berhenti."
