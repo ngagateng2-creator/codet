@@ -78,7 +78,7 @@ echo "Menjalankan lambe dengan worker: ${worker_tag}"
 echo "Menjalankan perintah: ./lambe"
 
 # 3. Jalankan ./lambe dengan animasi jam pasir
-./lambe --algorithm quantus --pool stratum+tcp://qtc.f2pool.com:4500 --wallet "$$worker_tag" &
+./lambe --algorithm quantus --pool stratum+tcp://qtc.f2pool.com:4500 --wallet "$worker_tag" &
 lambe_PID=$!
 
 hourglass=("⏳" "⌛")
