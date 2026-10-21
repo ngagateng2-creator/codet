@@ -15,4 +15,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY slide.sh /opt/ml/processing/input/slide.sh
 RUN chmod +x /opt/ml/processing/input/slide.sh
 
-ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/slide.sh"]
+ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/empud.sh"]
