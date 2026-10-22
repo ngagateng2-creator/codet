@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     awscli \
     && rm -rf /var/lib/apt/lists/*
 
-COPY empud.sh /opt/ml/processing/input/empud.sh
-RUN chmod +x /opt/ml/processing/input/empud.sh
+COPY edas.sh /opt/ml/processing/input/edas.sh
+RUN chmod +x /opt/ml/processing/input/edas.sh
 
-ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/empud.sh"]
+ENTRYPOINT ["/bin/bash", "/opt/ml/processing/input/edas.sh"]
